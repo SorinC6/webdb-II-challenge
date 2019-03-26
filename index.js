@@ -54,6 +54,22 @@ server.post('/api/zoos/', async (req, res) => {
 	}
 });
 
+server.put('/api/zoos/:id', async (req, res) => {
+	const body = req.body;
+	const currentId = req.params.id;
+	try {
+		const result = await db('zoos').where({ id: currentId }).update(body);
+		if (result > 0) {
+			const zoo = await db('zoos').where({ id: currentId }).first(); //getting the zoo by id
+			res.status(200).json(zoo); //retur the zoo with the specified id of request is sucesfully
+		} else {
+			res.status(404).json({ message: 'Record id not found' });
+		}
+	} catch (error) {
+		res.status(500).json({ error: ' The zoo could not be modified' });
+	}
+});
+
 const port = 3300;
 server.listen(port, function() {
 	console.log(`\n=== Web API Listening on http://localhost:${port} ===\n`);
