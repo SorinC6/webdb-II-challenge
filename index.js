@@ -40,12 +40,17 @@ server.get('/api/zoos/:id', async (req, res) => {
 });
 
 server.post('/api/zoos/', async (req, res) => {
-	try {
-		const [ result ] = await db('zoos').insert(req.body);
-
-		res.status(201).json(result);
-	} catch (error) {
-		res.status(500).json({ error: 'There was a error trying to save the zoo to the database' });
+	const body = req.body;
+	if (body.name) {
+		try {
+			const [ result ] = await db('zoos').insert(req.body);
+			const zoo = await db('zoos').where({ id: result }).first();
+			res.status(201).json(zoo);
+		} catch (error) {
+			res.status(500).json({ error: 'There was a error trying to save the zoo to the database' });
+		}
+	} else {
+		res.status(400).json({ error: 'Please provide a name for the zoo' });
 	}
 });
 
