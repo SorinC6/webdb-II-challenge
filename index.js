@@ -61,12 +61,27 @@ server.put('/api/zoos/:id', async (req, res) => {
 		const result = await db('zoos').where({ id: currentId }).update(body);
 		if (result > 0) {
 			const zoo = await db('zoos').where({ id: currentId }).first(); //getting the zoo by id
-			res.status(200).json(zoo); //retur the zoo with the specified id of request is sucesfully
+			res.status(200).json(zoo); //return the zoo with the specified id if request is sucesfully
 		} else {
 			res.status(404).json({ message: 'Record id not found' });
 		}
 	} catch (error) {
 		res.status(500).json({ error: ' The zoo could not be modified' });
+	}
+});
+
+server.delete('/api/zoos/:id', async (req, res) => {
+	const currentId = req.params.id;
+
+	try {
+		const result = await db('zoos').where({ id: currentId }).del();
+		if (result > 0) {
+			res.status(200).json({ message: 'Succesfully deleted' });
+		} else {
+			res.status(404).json({ message: 'The specified id not found' });
+		}
+	} catch (error) {
+		res.status(500).json({ error: 'tehe was a error trying to delete the zoo' });
 	}
 });
 
